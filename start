@@ -1,0 +1,154 @@
+#!/bin/bash
+
+if ! [ -f /opt/sonar/conf/sonar.properties.orig ]; then 
+    mv /opt/sonar/conf/sonar.properties /opt/sonar/conf/sonar.properties.orig
+fi
+
+printf 'Database Configuration:\n'
+LINKED_DB=${DB_PORT:="tcp://127.0.0.1:9092"}
+LINKED_PORT=$(echo ${LINKED_DB} | sed 's@tcp://\d+.?:\(\d+\)@\1@g')
+LINKED_HOST=$(echo ${LINKED_DB} | sed 's@tcp://\(\d+.?\)@\1@g')
+SONAR_DB_HOST=${DB_HOST:=${LINKED_HOST}}
+SONAR_DB_PORT=${DB_PORT:=${LINKED_PORT}}
+SONAR_DB_NAME=${DB_NAME:="sonar"}
+SONAR_DB_USER=${DB_USER:="admin"}
+SONAR_DB_PASS=${DB_PASS:="admin"}
+SONAR_DB_TYPE=${DB_TYPE:="embedded"}
+declare -A VALID_DB_TYPES=( [embedded]='embedded' [mysql]='mysql' [postgresql]='postgresql' [h2]='h2' [oracle]='oracle:thin' [sqlserver]='jtds:sqlserver' )
+if [[ "${VALID_DB_TYPES[${SONAR_DB_TYPE}]}X" == "X" ]]; then
+    echo "    Unsupported database type '${SONAR_DB_TYPE}'. Allowed options are:"
+    for db in ${!VALID_DB_TYPES[@]}; do
+        echo "        ${db}"
+    done
+    exit 1
+else
+    declare -A SONAR_DB_OPTS=( \
+	[mysql]='?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance' \
+        [sqlserver]=';SelectMethod=Cursor' \
+        [postgresql]='' \
+        [h2]='' \
+        [embedded]='' \
+        [oracle]='' \
+    )
+    SONAR_JDBC_OPTS=${SONAR_DB_OPTS[${SONAR_DB_TYPE}]}
+    SONAR_DB_TYPE=${VALID_DB_TYPES[${SONAR_DB_TYPE}]}
+fi
+rm -f /opt/sonar/conf/sonar.properties
+
+if [ "${SONAR_DB_TYPE}" != "embedded" ]; then
+    printf '    Configuring for external database server.\n'
+    SONAR_JDBC_URL=jdbc:${SONAR_DB_TYPE}://${SONAR_DB_HOST}:${SONAR_DB_PORT}/${SONAR_DB_NAME}${SONAR_JDBC_OPTS:=''}
+    echo "sonar.jdbc.url=${SONAR_JDBC_URL}" >> /opt/sonar/conf/sonar.properties
+    echo "sonar.jdbc.username=${SONAR_DB_USER}" >> /opt/sonar/conf/sonar.properties
+    echo "sonar.jdbc.password=${SONAR_DB_PASS}" >> /opt/sonar/conf/sonar.properties
+    echo "sonar.jdbc.maxActive=${SONAR_DB_MAX_ACTIVE:=50}" >> /opt/sonar/conf/sonar.properties
+    echo "sonar.jdbc.maxIdle=${SONAR_DB_MAX_IDLE:=5}" >> /opt/sonar/conf/sonar.properties
+    echo "sonar.jdbc.minIdle=${SONAR_DB_MIN_IDLE:=2}" >> /opt/sonar/conf/sonar.properties
+    echo "sonar.jdbc.maxWait=${SONAR_DB_MAX_WAIT:=5000}" >> /opt/sonar/conf/sonar.properties
+    echo "sonar.jdbc.minEvictableIdleTimeMillis=${SONAR_DB_MIN_EVICT:=600000}" >> /opt/sonar/conf/sonar.properties
+    echo "sonar.jdbc.timeBetweenEvictionRunsMillis=${SONAR_DB_EVICT_INTERVAL:=30000}" >> /opt/sonar/conf/sonar.properties
+fi
+
+printf 'Web Application:\n'
+if [[ ${SONAR_WEB_JAVA_OPTS} ]]; then
+    printf '    Setting Java options\n'
+    echo "sonar.web.javaOpts=${SONAR_WEB_JAVA_OPTS}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_CONTEXT} ]]; then
+    printf '    Setting context path\n'
+    echo "sonar.web.context=${SONAR_CONTEXT}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_WEB_PORT} ]]; then
+    printf '    Setting port\n'
+    echo "sonar.web.port=${SONAR_WEB_PORT}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_WEB_MAX_THREADS} ]]; then
+    printf '    Setting max threads\n'
+    echo "sonar.web.http.maxThreads=${SONAR_WEB_MAX_THREADS}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_WEB_MIN_THREADS} ]]; then
+    printf '    Setting min threads\n'
+    echo "sonar.web.http.minThreads=${SONAR_WEB_MIN_THREADS}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_WEB_QUEUE} ]]; then
+    printf '    Setting accept queue size\n'
+    echo "sonar.web.http.acceptCount=${SONAR_WEB_QUEUE}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_ACCESS_LOGS} ]]; then
+    printf '    Enabling access logs\n'
+    echo "sonar.web.accessLogs.enable=true" >> /opt/sonar/conf/sonar.properties
+fi
+
+printf 'Elastic Search:\n'
+if [[ ${SONAR_SEARCH_JAVA_OPTS} ]]; then
+    printf '    Setting java options\n'
+    echo "sonar.search.javaOpts=${SONAR_SEARCH_JAVA_OPTS}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_SEARCH_ADDL_OPTS} ]]; then
+    printf '    Setting additional java options\n'
+    echo "sonar.search.javaAdditionalOpts=${SONAR_SEARCH_ADDL_OPTS}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_SEARCH_PORT} ]]; then
+    printf '    Setting port\n'
+    echo "sonar.search.port=${SONAR_SEARCH_PORT}" >> /opt/sonar/conf/sonar.properties
+fi
+
+if [[ ${SONAR_DISABLE_UPDATES} ]]; then
+    printf 'Deactivating SonarQube Updates\n'
+    echo "sonar.updatecenter.activate=false" >> /opt/sonar/conf/sonar.properties
+fi
+
+printf 'Proxy:\n'
+if [[ ${SONAR_PROXY_HOST} ]]; then
+    printf '    Setting HTTP host\n'
+    echo "http.proxyHost=${SONAR_PROXY_HOST}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_PROXY_PORT} ]]; then
+    printf '    Setting HTTP port\n'
+    echo "http.proxyPort=${SONAR_PROXY_PORT}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_PROXY_NTLM_DOMAIN} ]]; then
+    echo "http.auth.ntlm.domain=${SONAR_PROXY_NTLM_DOMAIN}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_SOCKS_PROXY_HOST} ]]; then
+    printf '    Setting SOCKS host\n'
+    echo "http.socksProxyHost=${SONAR_SOCKS_PROXY_HOST}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_SOCKS_PROXY_PORT} ]]; then
+    printf '    Setting SOCKS port\n'
+    echo "http.socksProxyPort=${SONAR_SOCKS_PROXY_PORT}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_PROXY_USER} ]]; then
+    printf '    Setting user\n'
+    echo "http.proxyUser=${SONAR_PROXY_USER}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_PROXY_PASS} ]]; then
+    printf '    Setting password\n'
+    echo "http.proxyPassword=${SONAR_PROXY_PASS}" >> /opt/sonar/conf/sonar.properties
+fi
+if [[ ${SONAR_LOG_LEVEL} ]]; then
+    declare -A LOG_LEVELS=( [NONE]='NONE' [BASIC]='BASIC' [FULL]='FULL' )
+    if [[ ${LOG_LEVELS[${SONAR_LOG_LEVEL}]} ]]; then
+        printf "Setting log level to '${SONAR_LOG_LEVEL}'\n"
+        echo "sonar.log.profilingLevel=${SONAR_LOG_LEVEL}" >> /opt/sonar/conf/sonar.properties 
+    else
+        echo "Unknown log level option '${SONAR_LOG_LEVEL}'. Valid options are:"
+        for L in "${LOG_LEVELS[@]}"; do
+            echo "    ${L}"
+        done
+        echo "Defaulting to 'NONE'"
+    fi
+fi
+
+printf 'Setting up data, log, and temp directories\n'
+mkdir -p ${SONAR_LOG_PATH:="/data/sonar/logs"}
+mkdir -p ${SONAR_DATA_PATH:="/data/sonar/data"}
+mkdir -p ${SONAR_TEMP_PATH:="/data/sonar/temp"}
+echo "sonar.path.logs=${SONAR_LOG_PATH}" >> /opt/sonar/conf/sonar.properties
+echo "sonar.path.data=${SONAR_DATA_PATH}" >> /opt/sonar/conf/sonar.properties
+echo "sonar.path.temp=${SONAR_TEMP_PATH}" >> /opt/sonar/conf/sonar.properties
+
+if [[ ${SONAR_EXPOSE_ELASTIC_SEARCH} ]]; then
+    printf "Enabling HTTP access to Elastic Search on port '${SONAR_EXPOSE_ELASTIC_SEARCH}'"
+    echo "sonar.search.httpPort=${SONAR_EXPOSE_ELASTIC_SEARCH}" >> /opt/sonar/conf/sonar.properties
+fi
