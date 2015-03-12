@@ -161,5 +161,9 @@ if [[ ${SONAR_EXPOSE_ELASTIC_SEARCH} ]]; then
     echo "sonar.search.httpPort=${SONAR_EXPOSE_ELASTIC_SEARCH}" >> /opt/sonar/conf/sonar.properties
 fi
 
+printf 'Disabling wrapper.daemonize in SonarQube start script'
+sed -i 's@wrapper.daemonize=TRUE@wrapper.daemonize=FALSE@g' /opt/sonar/bin/linux-x86-32/sonar.sh
+sed -i 's@wrapper.daemonize=TRUE@wrapper.daemonize=FALSE@g' /opt/sonar/bin/linux-x86-64/sonar.sh
+
 printf 'Switching to supervisord...\n'
 exec supervisord -n -c /etc/supervisord.conf
