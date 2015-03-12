@@ -97,9 +97,9 @@ None of the options below are 'required', but without some of them, the data sto
   * Minimum time a connection must be idle before being considered for eviction from the connection pool (in milliseconds)
 * __SONAR_DB_EVICT_INTERVAL (30000)__
   * The interval at which the connection pool will consider evicting idle connections (in milliseconds)
-* __SONAR_LOG_PATH__
+* __SONAR_LOG_PATH__ (/data/sonar/logs)
   * The path at which SonarQube will write logs
-* __SONAR_DATA_PATH__
+* __SONAR_DATA_PATH__ (/data/sonar/data)
   * The path at which SonarQube will write analysis data
-* __SONAR_TEMP_PATH__
+* __SONAR_TEMP_PATH__ (/data/sonar/temp)
   * The path which SonarQube will use for temp files
