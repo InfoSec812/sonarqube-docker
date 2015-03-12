@@ -27,6 +27,16 @@ By default, SonarQube supports PostgreSQL, Oracle, MSSQL, MySQL, and an
 embedded H2 database. You should be able to use any database which 
 has a JDBC driver, but that would require customization of this container.
 
+## Quick Start
+
+# Install [fig](http://fig.sh/)
+# Download the [fig.yml file ](https://raw.githubusercontent.com/InfoSec812/sonarqube-docker/master/fig.yml.example) and save it as fig.yml
+# Edit the fig.yml file to meet your environment's needs
+# Start the container by running
+```bash
+fig up -d
+```
+
 ## Configuration Evnironment Variables
 
 None of the options below are 'required', but without some of them, the data stored will be lost every time the container is restarted. All default values are listed in parenthesis.
