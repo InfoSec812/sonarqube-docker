@@ -29,6 +29,8 @@ has a JDBC driver, but that would require customization of this container.
 
 ## Configuration Evnironment Variables
 
+None of the options below are 'required', but without some of them, the data stored will be lost every time the container is restarted. All default values are listed in parenthesis.
+
 * __SONAR_CONTEXT (/)__
   * The context path for the web application (Defaults to '/')
 * __SONAR_WEB_JAVA_OPTS (-Xmx768m -XX:MaxPermSize=160m -XX:+HeapDumpOnOutOfMemoryError)__
