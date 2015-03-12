@@ -54,6 +54,10 @@ if [[ ${SONAR_WEB_JAVA_OPTS} ]]; then
     printf '    Setting Java options\n'
     echo "sonar.web.javaOpts=${SONAR_WEB_JAVA_OPTS}" >> /opt/sonar/conf/sonar.properties
 fi
+if [[ ${SONAR_WEB_ADDL_OPTS} ]]; then
+    printf '    Setting Java options\n'
+    echo "sonar.web.javaAdditionalOpts=${SONAR_WEB_ADDL_OPTS}" >> /opt/sonar/conf/sonar.properties
+fi
 if [[ ${SONAR_CONTEXT} ]]; then
     printf '    Setting context path\n'
     echo "sonar.web.context=${SONAR_CONTEXT}" >> /opt/sonar/conf/sonar.properties
