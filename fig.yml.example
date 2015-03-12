@@ -1,0 +1,41 @@
+sonarqube:
+  image: sonarqube
+  ports:
+    - "9000:9000"
+  name:
+    - "sonarqube"
+  environment:         ## Variables below indicate the default settings. Change them to suit your needs.
+    SONAR_WEB_PORT: 9000
+    SONAR_WEB_MAX_THREADS: 50
+    SONAR_WEB_MIN_THREADS: 5
+#    SONAR_WEB_QUEUE: 25
+#    SONAR_ACCESS_LOGS: false
+#    SONAR_SEARCH_JAVA_OPTS: -Xmx768m -XX:MaxPermSize=160m -XX:+HeapDumpOnOutOfMemoryError
+#    SONAR_SEARCH_ADDL_OPTS:
+#    SONAR_DISABLE_UPDATES:
+#    SONAR_PROXY_HOST:
+#    SONAR_PROXY_PORT:
+#    SONAR_SOCKS_PROXY_HOST:
+#    SONAR_SOCKS_PROXY_PORT:
+#    SONAR_PROXY_USER:
+#    SONAR_PROXY_PASS:
+#    SONAR_LOG_LEVEL: NONE
+#    SONAR_CONTEXT: /sonar
+#    SONAR_SEARCH_JAVA_OPTS: -Xmx1G -Xms256m -Xss256k -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError
+#    SONAR_DB_MAX_ACTIVE: 50
+#    SONAR_DB_MAX_IDLE: 5
+#    SONAR_DB_MIN_IDLE: 2
+#    SONAR_DB_MAX_WAIT: 5000
+#    SONAR_DB_MIN_EVICT: 600000
+#    SONAR_DB_EVICT_INTERVAL: 30000
+#    SONAR_LOG_PATH: /data/sonar/logs
+#    SONAR_DATA_PATH: /data/sonar/data
+#    SONAR_TEMP_PATH: /data/sonar/temp
+#    DB_HOST: 127.0.0.1
+#    DB_PORT: 5432
+#    DB_NAME: sonar
+#    DB_USER: dbuser
+#    DB_PASS: dbuser
+#    DB_TYPE: embedded
+  volumes:
+    - "/opt/sonarqube/data:/data"
