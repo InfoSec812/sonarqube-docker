@@ -4,6 +4,9 @@ if ! [ -f /opt/sonar/conf/sonar.properties.orig ]; then
     mv /opt/sonar/conf/sonar.properties /opt/sonar/conf/sonar.properties.orig
 fi
 
+export ARCH=`uname -p | sed 's@_@-@g'`
+echo "wrapper.daemonize=false" >> /opt/sonar/conf/wrapper.properties
+
 printf 'Database Configuration:\n'
 LINKED_DB=${DB_PORT:="tcp://127.0.0.1:9092"}
 LINKED_PORT=$(echo ${LINKED_DB} | sed 's@tcp://\d+.?:\(\d+\)@\1@g')
@@ -145,7 +148,8 @@ if [[ ${SONAR_LOG_LEVEL} ]]; then
 fi
 
 printf 'Setting up data, log, and temp directories\n'
-mkdir -p ${SONAR_LOG_PATH:="/data/sonar/logs"}
+export SONAR_LOG_PATH=${SONAR_LOG_PATH:="/data/sonar/logs"}
+mkdir -p ${SONAR_LOG_PATH}
 mkdir -p ${SONAR_DATA_PATH:="/data/sonar/data"}
 mkdir -p ${SONAR_TEMP_PATH:="/data/sonar/temp"}
 echo "sonar.path.logs=${SONAR_LOG_PATH}" >> /opt/sonar/conf/sonar.properties
@@ -156,3 +160,6 @@ if [[ ${SONAR_EXPOSE_ELASTIC_SEARCH} ]]; then
     printf "Enabling HTTP access to Elastic Search on port '${SONAR_EXPOSE_ELASTIC_SEARCH}'"
     echo "sonar.search.httpPort=${SONAR_EXPOSE_ELASTIC_SEARCH}" >> /opt/sonar/conf/sonar.properties
 fi
+
+printf 'Switching to supervisord...\n'
+exec supervisord -n -c /etc/supervisord.conf
