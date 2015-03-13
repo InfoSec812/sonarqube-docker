@@ -30,12 +30,46 @@ has a JDBC driver, but that would require customization of this container.
 
 ## Quick Start
 
-- Install [fig](http://fig.sh/)
-- Download the [fig.yml file](https://raw.githubusercontent.com/InfoSec812/sonarqube-docker/master/fig.yml.example) and save it as fig.yml
-- Edit the fig.yml file to meet your environment's needs
+- Install [docker-compose](http://docker.io/compose/)
+- Download the [docker-compose.yml file](https://raw.githubusercontent.com/InfoSec812/sonarqube-docker/master/docker-compose.yml.example) and save it as docker-compose.yml
+- Edit the docker-compose.yml file to meet your environment's needs
 - Start the container by running
 ```bash
-fig up -d
+docker-compose up -d
+```
+
+## Upgrading
+
+In most cases, upgrading from one version of this container to the next consists of:
+- Stop the container
+- Delete <DATA_DIR>/data/es directory
+- Pull the new version of the container
+- Start the new container
+- Browse to http(s)://yourserver/upgrade
+- Follow upgrade instructions
+
+You may need to adjust the URL above depending on your configuration. Also, upgrading plugins may be required.
+
+## Restarting the SonarQube Service
+
+In order to install/upgrade plugins you need to restart the SonarQube service. You can do so 
+without having to restart the container if desired. Use the __docker exec__ command to enter the running container
+and then issue a __kill -9__ command to force supervisord to restart the service.
+
+EXAMPLE:
+```bash
+$ docker ps | grep sonar
+5dc3df48b34c        infosec812/sonarqube:5.0.1   "/bin/sh -c /usr/bin   14 minutes ago      Up 14 minutes       0.0.0.0:9000->9000/tcp                                  sonarqube_sonarqube_1 
+$ docker exec -i -t sonarqube_sonarqube_1 /bin/bash
+$ ps ax | grep java
+   66 ?        Sl     0:01 java -Djava.awt.headless=true -Xms3m -Xmx32m -Djava.library.path=./lib -classpath ../../lib/jsw/wrapper-3.2.3.jar:../../lib/sonar-application-5.0.1.jar -Dwrapper.key=SUsO34i7qsG0udi_ -Dwrapper.port=32000 -Dwrapper.jvm.port.min=31000 -Dwrapper.jvm.port.max=31999 -Dwrapper.pid=64 -Dwrapper.version=3.2.3 -Dwrapper.native_library=wrapper -Dwrapper.cpu.timeout=10 -Dwrapper.jvmid=1 org.tanukisoftware.wrapper.WrapperSimpleApp org.sonar.application.App
+   91 ?        Sl     0:41 /usr/java/jdk1.8.0_20/jre/bin/java -Djava.awt.headless=true -Xmx1G -Xms256m -Xss256k -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError -Djava.io.tmpdir=/data/temp -cp ./lib/common/*:./lib/search/* org.sonar.search.SearchServer /tmp/sq-process3534710488578140315properties
+  169 ?        Sl     1:08 /usr/java/jdk1.8.0_20/jre/bin/java -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djruby.management.enabled=false -Djruby.compile.invokedynamic=false -Xmx768m -XX:MaxPermSize=160m -XX:+HeapDumpOnOutOfMemoryError -Djava.net.preferIPv4Stack=true -Djava.io.tmpdir=/data/temp -cp ./lib/common/*:./lib/server/*:/opt/sonar/lib/jdbc/postgresql/postgresql-9.3-1101-jdbc4.jar org.sonar.server.app.WebServer /tmp/sq-process3177121203749324429properties
+  303 ?        S+     0:00 grep --color=auto java
+$ kill -9 66 91 169
+$ supervisorctl stop sonarqube
+$ supervisorctl start sonarqube
+$ exit
 ```
 
 ## Configuration Evnironment Variables
