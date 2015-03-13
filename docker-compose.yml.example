@@ -1,5 +1,5 @@
 sonarqube:
-  image: infosec812/sonarqube:5.0.1
+  image: infosec812/sonarqube:5.0.1-1
   ports:
     - "9000:9000"
   name:
