@@ -1,5 +1,5 @@
 sonarqube:
-  image: infosec812/sonarqube
+  image: infosec812/sonarqube:5.0.1
   ports:
     - "9000:9000"
   name:
@@ -28,9 +28,7 @@ sonarqube:
 #    SONAR_DB_MAX_WAIT: 5000
 #    SONAR_DB_MIN_EVICT: 600000
 #    SONAR_DB_EVICT_INTERVAL: 30000
-#    SONAR_LOG_PATH: /data/sonar/logs
-#    SONAR_DATA_PATH: /data/sonar/data
-#    SONAR_TEMP_PATH: /data/sonar/temp
+#    SONAR_DATA_DIR: /data
 #    DB_HOST: 127.0.0.1
 #    DB_PORT: 5432
 #    DB_NAME: sonar
