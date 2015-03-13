@@ -1,5 +1,10 @@
 #!/bin/bash
 
+cd /opt
+if ! [ -d ${SONAR_DATA_DIR:="/data"}/sonar/plugins ]; then
+    mv sonar/extensions/plugins ${SONAR_DATA_DIR:="/data"}/sonar/
+    ln -s ${SONAR_DATA_DIR:="/data"}/sonar/plugins /opt/sonar/extensions/plugins
+fi
 if ! [ -f /opt/sonar/conf/sonar.properties.orig ]; then 
     mv /opt/sonar/conf/sonar.properties /opt/sonar/conf/sonar.properties.orig
 fi
@@ -146,6 +151,10 @@ if [[ ${SONAR_LOG_LEVEL} ]]; then
         echo "Defaulting to 'NONE'"
     fi
 fi
+
+SONAR_LOG_PATH=${SONAR_DATA_DIR:="/data"}/logs
+SONAR_DATA_PATH=${SONAR_DATA_DIR:="/data"}/data
+SONAR_TEMP_PATH=${SONAR_DATA_DIR:="/data"}/temp
 
 printf 'Setting up data, log, and temp directories\n'
 export SONAR_LOG_PATH=${SONAR_LOG_PATH:="/data/sonar/logs"}
