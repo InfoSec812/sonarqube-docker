@@ -30,7 +30,7 @@ has a JDBC driver, but that would require customization of this container.
 
 ## Quick Start
 
-- Install [docker-compose](http://docker.io/compose/)
+- Install [docker-compose](http://docs.docker.com/compose/)
 - Download the [docker-compose.yml file](https://raw.githubusercontent.com/InfoSec812/sonarqube-docker/master/docker-compose.yml.example) and save it as docker-compose.yml
 - Edit the docker-compose.yml file to meet your environment's needs
 - Start the container by running
@@ -72,7 +72,7 @@ $ supervisorctl start sonarqube
 $ exit
 ```
 
-## Configuration Evnironment Variables
+## Configuration Environment Variables
 
 None of the options below are 'required', but without some of them, the data stored will be lost every time the container is restarted. All default values are listed in parenthesis.
 
