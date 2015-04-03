@@ -7,7 +7,7 @@ RUN yum -y upgrade
 RUN curl -o jdk8.rpm -sSf -L --cookie "oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u20-b26/jdk-8u20-linux-x64.rpm && rpm -ivh jdk8.rpm && rm -f jdk8.rpm
 RUN pip install supervisor
 WORKDIR /opt
-RUN curl -s -o sonarqube.zip http://dist.sonar.codehaus.org/sonarqube-5.0.1.zip
+RUN curl -s -o sonarqube.zip http://dist.sonar.codehaus.org/${LATEST}
 RUN unzip sonarqube.zip && mv sonarqube-5.0.1 sonar && rm -f sonarqube.zip
 ADD docker /
 RUN chmod 755 /usr/bin/start
