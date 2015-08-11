@@ -1,0 +1,5 @@
+#!/bin/bash
+
+/usr/bin/supervisorctl sonarqube stop
+sleep 2
+/usr/bin/supervisorctl sonarqube start

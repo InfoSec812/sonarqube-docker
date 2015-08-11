@@ -1,0 +1,20 @@
+#!/bin/bash
+
+printf "* Linking persistent directories\n"
+for DIR in `echo "extensions data temp logs conf"`
+do
+    printf "    * Linking '/opt/sonar/${DIR}' directory to data volume\n"
+    if ! [ -d /data/sonar/${DIR} ]; then
+        printf "        * Copying default '/opt/sonar/${DIR}' directory to data volume\n"
+        mkdir -p /data/sonar
+        mv /opt/sonar/${DIR} /data/sonar/
+    fi
+    rm -rf /opt/sonar/${DIR}
+    ln -s /data/sonar/${DIR} /opt/sonar/${DIR}
+done
+
+set | grep "^sonar.*" | sed 's@__@.@g' > /data/sonar/conf/sonar.properties
+printf "* SonarQube properties\n"
+cat /data/sonar/conf/sonar.properties | sed 's@^@    * @g'
+
+/usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
