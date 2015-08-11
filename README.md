@@ -44,7 +44,8 @@ For example, to enable Oracle as the database:
 
 - Install [docker-compose](http://docs.docker.com/compose/)
 - Download the [docker-compose.yml file](https://raw.githubusercontent.com/InfoSec812/sonarqube-docker/master/docker-compose.yml.example) and save it as docker-compose.yml
-- Edit the docker-compose.yml file to meet your environment's needs
+- Create a "data" directory for storing persistent information from SonarQube
+- Edit the docker-compose.yml file to meet your environment's needs, including setting the "data" volume to the directory created in the previous step.
 - Start the container by running
 ```bash
 docker-compose up -d
