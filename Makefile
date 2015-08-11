@@ -12,9 +12,12 @@ dist-clean:
 
 docker:
 	@cat Dockerfile.template | sed "s@__VERSION__@$(VERSION)@g" > Dockerfile
-	@docker build --no-cache=true -t infosec812/sonarqube:$(VERSION) ./
+	@docker build -t infosec812/sonarqube:$(VERSION) ./
 	@docker tag -f infosec812/sonarqube:$(VERSION) infosec812/sonarqube:latest
 
 docker-up: docker
 	@docker-compose rm --force
 	@docker-compose up
+
+docker-push: docker
+	@docker push infosec812/sonarqube:$(VERSION)

@@ -11,7 +11,8 @@ database by setting the appropriate configuration variables.
 
 ## Prerequisites
 
-* Docker
+* [Docker](https://docker.io/)
+* [GNU Make](https://www.gnu.org/software/make/)
 * Internet Access
 
 ## Building The Container
@@ -19,7 +20,16 @@ database by setting the appropriate configuration variables.
 ```bash
 git clone https://github.com/InfoSec812/sonarqube.git
 cd **sonarqube
-docker build -t **sonarqube ./
+git checkout <version>
+make docker
+```
+The version can be something like "5.1.2" or "4.5.5-LTS". To see a list, run "git tag"
+
+You can also build a specific version of the container by changing the VERSION
+file in the root of the repository and then running:
+
+```bash
+make docker
 ```
 
 ## Database
