@@ -4,10 +4,11 @@ sonarqube:
     - "9000:9000"
   name:
     - "sonarqube"
-  environment:
+#  environment:
     ## Any sonar.xxx.xxx.xxx property can be set here by replacing the dots with double underscores
-    sonar__jdbc__url: jdbc:postgresql://192.168.1.210:5432/sonar
-    sonar__jdbc__username: dphillips
-    sonar__jdbc__password: ignored
+    # sonar__jdbc__url: jdbc:postgresql://192.168.1.210:5432/sonar
+    # sonar__jdbc__username: my_db_user
+    # sonar__jdbc__password: my_db_password
   volumes:
     - "data:/data"
+  command: /usr/bin/start
