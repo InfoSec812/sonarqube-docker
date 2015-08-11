@@ -18,3 +18,6 @@ docker:
 docker-up: docker
 	@docker-compose rm --force
 	@docker-compose up
+
+docker-push: docker
+	@docker push infosec812/sonarqube:$(VERSION)
