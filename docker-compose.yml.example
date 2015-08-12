@@ -2,6 +2,7 @@ sonarqube:
   image: infosec812/sonarqube:5.1.2
   ports:
     - "9000:9000"
+    - "9092:9092" # Only needed when using the embedded H2 database
   name:
     - "sonarqube"
 #  environment:
