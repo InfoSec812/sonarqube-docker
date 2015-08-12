@@ -61,6 +61,46 @@ For example, to enable Oracle as the database:
 docker-compose up -d
 ```
 
+By default, this container will use the embedded H2 database running on port 9092 (which you will need to export from the container). To access the embedded DB
+you will need to modify the docker-compose.yml file to expose the database port as shown below:
+
+```
+sonarqube:
+  image: infosec812/sonarqube:5.1.2
+  ports:
+    - "9000:9000"
+    - "9092:9092"
+  name:
+    - "sonarqube"
+  volumes:
+    - "/path/to/persistent/data:/data"
+  command: /usr/bin/start
+```
+
+If you want to use an external database,
+you will need to pass in the options detailed in the README.md file (below). The easiest way to accomplish this is to modify the docker-compose.yml file
+to set up the required environment variables as demonstrated below for an external PostgreSQL database. 
+
+```
+sonarqube:
+  image: infosec812/sonarqube:5.1.2
+  ports:
+    - "9000:9000"
+  name:
+    - "sonarqube"
+  environment:
+    sonar__jdbc__url: jdbc:postgresql://192.168.1.210:5432/sonar
+    sonar__jdbc__username: sonar
+    sonar__jdbc__password: sonar
+  volumes:
+    - "/path/to/persistent/data:/data"
+  command: /usr/bin/start
+```
+
+This will configure SonarQube to connect to an external PostgreSQL database with an IP address of '192.168.1.210' using the user/pass of "sonar/sonar". The database "sonar"
+will have to already have been created manually, but SonarQube will create all of the required tables and database schema.
+
+
 ## Upgrading
 
 In most cases, upgrading from one version of this container to the next consists of:

@@ -8,6 +8,7 @@ RUN sed -i 's|wrapper.daemonize=TRUE|wrapper.daemonize=FALSE|g' /opt/sonar/bin/l
 ADD sonarqube.conf /etc/supervisor/conf.d/sonarqube.conf
 
 EXPOSE 9000
+EXPOSE 9092
 VOLUME /data
 
 ADD start /usr/bin/start

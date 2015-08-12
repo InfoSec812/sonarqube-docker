@@ -1,0 +1,8 @@
+README.md
+LICENSE
+
+Dockerfile
+docker-compose.yml
+docker-compose.yml.example
+data
+data/**
