@@ -1,0 +1,24 @@
+sonarqube:
+  image: infosec812/sonarqube:5.1.2
+  environment: 
+   sonar__jdbc__maxWait: 5000
+   sonar__jdbc__minEvictableIdleTimeMillis: 600000
+   sonar__jdbc__timeBetweenEvictionRunsMillis: 30000
+   sonar__web__javaOpts: '-Xmx768m -XX:MaxPermSize**=160m -XX:+HeapDumpOnOutOfMemoryError'
+   sonar__search__javaOpts: '-Xmx1G -Xms256m -Xss256k -Djava__net__preferIPv4Stack**=true \'
+   sonar__search__port: 9001
+   sonar__search__httpPort: 9010
+   
+  ports:
+    - "9000:9000"
+  name:
+    - "sonarqube"
+
+  volumes:
+    - "data:/data"
+    - "conf:/conf"
+    - "logs:/logs"
+    - "extensions:/extensions"
+    - "bundled-plugins:/bundled-plugins"
+    
+  command: /usr/bin/start
