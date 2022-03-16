@@ -1,8 +1,8 @@
 FROM ubuntu:latest
 MAINTAINER Deven Phillips <deven.phillips@gmail.com>
 
-RUN apt-get update && apt-get -y install unzip curl openjdk-7-jre-headless supervisor && rm -rf /var/cache/apt
-RUN cd /tmp && curl -L -O http://dist.sonar.codehaus.org/sonarqube-__VERSION__.zip && unzip sonarqube-__VERSION__.zip && mv sonarqube-__VERSION__ /opt/sonar
+RUN apt-get update && apt-get -y install unzip curl openjdk-11-jre-headless supervisor && rm -rf /var/cache/apt
+RUN cd /tmp && curl -L -O https://binaries.sonarsource.com/CommercialDistribution/sonarqube-developer/sonarqube-developer-__VERSION__.zip && unzip sonarqube-__VERSION__.zip && mv sonarqube-__VERSION__ /opt/sonar
 RUN sed -i 's|wrapper.daemonize=TRUE|wrapper.daemonize=FALSE|g' /opt/sonar/bin/linux-x86-64/sonar.sh
 
 ADD sonarqube.conf /etc/supervisor/conf.d/sonarqube.conf
